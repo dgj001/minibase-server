@@ -12,6 +12,7 @@ const databaseRoutes = require('./api/routes/databaseRoutes');
 const documentRoutes = require('./api/routes/documentRoutes');
 const fieldRoutes = require('./api/routes/fieldRoutes');
 const projectRoutes = require('./api/routes/projectRoutes');
+const projectUserRoutes = require('./api/routes/projectUserRoutes');
 const userRoutes = require('./api/routes/userRoutes');
 
 // const DB = process.env.DATABASE_LOCAL.replace(
@@ -55,6 +56,7 @@ app.use('/api/v1/databases', databaseRoutes);
 app.use('/api/v1/documents', documentRoutes);
 app.use('/api/v1/fields', fieldRoutes);
 app.use('/api/v1/projects', projectRoutes);
+app.use('/api/v1/projectUsers', projectUserRoutes);
 app.use('/api/v1/users', userRoutes);
 
 app.use((req, resp, next) => {

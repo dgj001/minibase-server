@@ -5,6 +5,7 @@ const Database = require('../models/databaseModel');
 const Document = require('../models/documentModel');
 const Field = require('../models/fieldModel');
 const Project = require('../models/projectModel');
+const ProjectUser = require('../models/projectUserModel');
 const User = require('../models/userModel');
 
 dotenv.config({ path: '../../config.env' });
@@ -86,6 +87,10 @@ const importData = async () => {
               }
             ]
           }
+        ],
+        projectUsers: [
+          { email: 'bob.smith@example.com', password: 'setpass123' },
+          { email: 'wanda_richardson@example.com', password: 'setpass123' },
         ]
       },
       {
@@ -132,6 +137,10 @@ const importData = async () => {
               }
             ]
           }
+        ],
+        projectUsers: [
+          { email: 'melinda.rogers@example.com', password: 'setpass123' },
+          { email: 'william.hanover@example.com', password: 'setpass123' },
         ]
       }
     ];
@@ -150,7 +159,7 @@ const importData = async () => {
 
         for (const db of prj.databases) {
           db._id = new mongoose.Types.ObjectId();
-          db.projectId = newProjects[0]._id
+          db.projectId = newProjects[0]._id;
           const newDatabases = await Database.create([db]);
 
           for (const col of db.collections) {
@@ -174,6 +183,12 @@ const importData = async () => {
             }
           }
         }
+
+        for (const prjUser of prj.projectUsers) {
+          prjUser._id = new mongoose.Types.ObjectId();
+          prjUser.projectId = newProjects[0]._id;
+          await ProjectUser.create(prjUser);
+        }
       }
     }
 
@@ -192,6 +207,7 @@ const deleteData = async () => {
     await Collection.deleteMany();
     await Database.deleteMany();
     await Project.deleteMany();
+    await ProjectUser.deleteMany();
     await User.deleteMany();
     console.log('Data successfully deleted!');
   } catch (err) {
