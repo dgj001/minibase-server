@@ -146,38 +146,27 @@ const importData = async () => {
     ];
 
     // Replace password with has
-    for (const user of users) {
-      user._id = new mongoose.Types.ObjectId();
-    }
     users = await User.create(users);
 
     if (users.length > 0) {
       for (const prj of projects) {
-        prj._id = new mongoose.Types.ObjectId();
         prj.userId = users[0]._id
         const newProjects = await Project.create([prj]);
 
         for (const db of prj.databases) {
-          db._id = new mongoose.Types.ObjectId();
           db.projectId = newProjects[0]._id;
           const newDatabases = await Database.create([db]);
 
           for (const col of db.collections) {
-            col._id = new mongoose.Types.ObjectId();
             col.databaseId = newDatabases[0]._id;
-            col.createdAt = Date.now();
             const newCollections = await Collection.create([col]);
 
             for (const doc of col.documents) {
-              doc._id = new mongoose.Types.ObjectId();
               doc.collectionId = newCollections[0]._id;
-              doc.createdAt = Date.now();
               const newDocuments = await Document.create([doc]);
 
               for (const fld of doc.fields) {
-                fld._id = new mongoose.Types.ObjectId();
                 fld.documentId = newDocuments[0]._id;
-                fld.createdAt = Date.now();
                 await Field.create([fld]);
               }
             }

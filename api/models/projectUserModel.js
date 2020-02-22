@@ -1,9 +1,7 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
-const uniqueValidator = require('mongoose-unique-validator');
 
 const projectUserSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
     email: {
         type: String,
         required: true

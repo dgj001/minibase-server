@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const fieldSchema = mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
   name: {
     type: String,
     required: true
@@ -14,7 +13,10 @@ const fieldSchema = mongoose.Schema({
     ref: 'Document',
     required: true
   },
-  createdAt: Date
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 module.exports = mongoose.model('Field', fieldSchema);
