@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-const Project = require('./../controllers/projectController');
-const checkAuth = require('./../middleware/check-auth');
+const projectController = require('./../controllers/projectController');
 
-router.get('/', Project.getAll);
+router.route('/')
+    .get(projectController.getAll)
+    .post(projectController.post);
 
-router.post('/', Project.post);
-
-router.get('/:id', Project.get);
-
-router.patch('/:id', Project.patch);
-
-router.delete('/:id', Project.delete);
+router.route('/:id')
+    .get(projectController.get)
+    .patch(projectController.patch)
+    .delete(projectController.delete);
 
 module.exports = router;

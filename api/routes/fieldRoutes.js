@@ -1,19 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-const Field = require('./../controllers/fieldController');
-const checkAuth = require('./../middleware/check-auth');
+const fieldController = require('./../controllers/fieldController');
 
-router.get('/count', Field.count);
+router.get('/count', fieldController.count);
 
-router.get('/', Field.getAll);
+router.route('/')
+    .get(fieldController.getAll)
+    .post(fieldController.post);
 
-router.post('/', Field.post);
-
-router.get('/:id', Field.get);
-
-router.patch('/:id', Field.patch);
-
-router.delete('/:id', Field.delete);
+router.route('/:id')
+    .get(fieldController.get)
+    .patch(fieldController.patch)
+    .delete(fieldController.delete);
 
 module.exports = router;

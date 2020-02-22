@@ -1,19 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-const Document = require('./../controllers/documentController');
-const checkAuth = require('./../middleware/check-auth');
+const documentController = require('./../controllers/documentController');
 
-router.get('/count', Document.count);
+router.get('/count', documentController.count);
 
-router.get('/', Document.getAll);
+router.route('/')
+    .get(documentController.getAll)
+    .post(documentController.post);
 
-router.post('/', Document.post);
-
-router.get('/:id', Document.get);
-
-router.patch('/:id', Document.patch);
-
-router.delete('/:id', Document.delete);
+router.route('/:id')
+    .get(documentController.get)
+    .patch(documentController.patch)
+    .delete(documentController.delete);
 
 module.exports = router;

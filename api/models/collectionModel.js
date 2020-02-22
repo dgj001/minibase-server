@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const collectionSchema = mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
   name: {
     type: String,
     required: true
@@ -11,7 +10,10 @@ const collectionSchema = mongoose.Schema({
     ref: 'Database',
     required: true
   },
-  createdAt: Date
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 module.exports = mongoose.model('Collection', collectionSchema);

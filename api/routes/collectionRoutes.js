@@ -1,19 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-const Collection = require('./../controllers/collectionController');
-const checkAuth = require('../middleware/check-auth');
+const collectionController = require('./../controllers/collectionController');
 
-router.get('/count', Collection.count);
+router.get('/count', collectionController.count);
 
-router.get('/', Collection.getAll);
+router.route('/')
+    .get(collectionController.getAll)
+    .post(collectionController.post);
 
-router.post('/', Collection.post);
-
-router.get('/:id', Collection.get);
-
-router.patch('/:id', Collection.patch);
-
-router.delete('/:id', Collection.delete);
+router.route('/:id')
+    .get(collectionController.get)
+    .patch(collectionController.patch)
+    .delete(collectionController.delete);
 
 module.exports = router;

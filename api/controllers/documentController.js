@@ -1,115 +1,30 @@
-const mongoose = require('mongoose');
+const factory = require('./handlerFactory');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('./../utils/AppError');
 
 const Document = require('../models/documentModel');
 const Collection = require('../models/collectionModel');
 
-exports.count = (req, res, next) => {
-    Document.countDocuments(req.query)
-        .then(count => {
-            res.status(200).json({
-                status: '/documents/count GET successful',
-                count
-            })
-        })
-}
+exports.count = factory.count(Document);
 
-exports.getAll = (req, res, next) => {
-    Document.find(req.query)
-        .then(docs => {
-            res.status(200).json({
-                status: '/documents  GET successful',
-                documents: docs
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: '/documents  GET failed',
-            });
-        });
-}
+exports.getAll = factory.getAll(Document);
 
-exports.post = (req, res, next) => {
-    Collection.findById(req.body.collectionId)
-        .then(collection => {
-            if (!collection) {
-                return res.status(404).json({
-                    status: '/documents  POST failed',
-                    message: "Referenced collection not found"
-                });
-            }
-            const doc = new Document({
-                _id: new mongoose.Types.ObjectId(),
-                name: req.body.name,
-                collectionId: collection._id,
-                createdAt: Date.now()
-            });
-            return doc.save();
-        })
-        .then(result => {
-            res.status(201).json({
-                status: '/documents  POST successful',
-                createdDocument: result
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                status: '/documents  POST failed',
-                message: error.message
-            });
-        });
-}
-
-exports.get = (req, res, next) => {
-    const id = req.params.id;
-    Document.findById(id)
-        .then(doc => {
-            if (doc) {
-                res.status(200).json({
-                    status: '/documents  GET:id successful',
-                    document: doc
-                });
-            } else {
-                res.status(404).json({
-                    status: '/documents  GET:id failed'
-                });
-            }
-        })
-        .catch(error => {
-            res.status(500).json({
-                status: '/documents  GET failed'
-            });
-        });
-}
-
-exports.patch = (req, res, next) => {
-    const id = req.params.id;
-    const doc = {
-        name: req.body.name
+exports.post = catchAsync(async (req, res, next) => {
+    const col = await Collection.findById(req.body.collectionId);
+    if (!col) {
+        return next(new AppError('No parent collection document found with that ID', 404));
     }
-    Document.updateOne({ _id: id }, doc)
-        .then(result => {
-            res.status(200).json({
-                status: '/documents  PATCH successful'
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                status: '/documents  PATCH failed'
-            });
-        });
-}
+    const newDoc = await Document.create(req.body);
+    res.status(201).json({
+        status: 'success',
+        data: {
+            document: newDoc
+        }
+    });
+});
 
-exports.delete = (req, res, next) => {
-    const id = req.params.id;
-    Document.deleteOne({ _id: id })
-        .then(result => {
-            res.status(200).json({
-                status: '/documents  DELETE successful'
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                status: '/documents  DELETE failed'
-            });
-        });
-}
+exports.get = factory.getOne(Document);
+
+exports.patch = factory.updateOne(Document);
+
+exports.delete = factory.deleteOne(Document);

@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
 
-const Database = require('./../controllers/databaseController');
-const checkAuth = require('.././middleware/check-auth');
+const databaseController = require('./../controllers/databaseController');
 
-router.get('/', Database.getAll);
+router.route('/')
+    .get(databaseController.getAll)
+    .post(databaseController.post);
 
-router.post('/', Database.post);
-
-router.get('/:id', Database.get);
-
-router.patch('/:id', Database.patch);
-
-router.delete('/:id', Database.delete);
+router.route('/:id')
+    .get(databaseController.get)
+    .patch(databaseController.patch)
+    .delete(databaseController.delete);
 
 module.exports = router;

@@ -1,22 +1,10 @@
 const mongoose = require('mongoose');
+const factory = require('./handlerFactory');
 
 const ProjectUser = require('../models/projectUserModel');
 const Project = require('./../models/projectModel');
 
-exports.getAll = (req, res, next) => {
-  ProjectUser.find(req.query)
-    .then(projectUsers => {
-      res.status(200).json({
-        status: '/projectUsers GET successful',
-        projectUsers
-      });
-    })
-    .catch(error => {
-      res.status(500).json({
-        message: '/projectUsers GET failed',
-      });
-    });
-}
+exports.getAll = factory.getAll(ProjectUser);
 
 exports.signup = (req, res, next) => {
   Project.findById(req.body.projectId)

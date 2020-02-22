@@ -1,115 +1,30 @@
-const mongoose = require('mongoose');
+const factory = require('./handlerFactory');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('./../utils/AppError');
 
 const Collection = require('./../models/collectionModel');
 const Database = require('./../models/databaseModel');
 
-exports.count = (req, res, next) => {
-    Collection.countDocuments(req.query)
-        .then(count => {
-            res.status(200).json({
-                status: '/collections/count GET successful',
-                count
-            })
-        })
-}
+exports.count = factory.count(Collection);
 
-exports.getAll = (req, res, next) => {
-    Collection.find(req.query)
-        .then(cols => {
-            res.status(200).json({
-                status: '/collections GET successful',
-                collections: cols
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: '/collections GET failed',
-            });
-        });
-}
-
-exports.post = (req, res, next) => {
-    Database.findById(req.body.databaseId)
-        .then(database => {
-            if (!database) {
-                return res.status(404).json({
-                    status: '/collections POST failed',
-                    message: "Referenced database not found"
-                });
-            }
-            const col = new Collection({
-                _id: new mongoose.Types.ObjectId(),
-                name: req.body.name,
-                databaseId: database._id,
-                createdAt: Date.now()
-            });
-            return col.save();
-        })
-        .then(result => {
-            res.status(201).json({
-                status: '/collections POST successful',
-                createdCollection: result
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                status: '/collections POST failed',
-                message: error.message
-            });
-        });
-}
-
-exports.get = (req, res, next) => {
-    const id = req.params.id;
-    Collection.findById(id)
-        .then(col => {
-            if (col) {
-                res.status(200).json({
-                    status: '/collections GET:id successful',
-                    collection: col
-                });
-            } else {
-                res.status(404).json({
-                    status: '/collections GET:id failed'
-                });
-            }
-        })
-        .catch(error => {
-            res.status(500).json({
-                status: '/collections GET failed'
-            });
-        });
-}
-
-exports.patch = (req, res, next) => {
-    const id = req.params.id;
-    const col = {
-        name: req.body.name
+exports.post = catchAsync(async (req, res, next) => {
+    const parent = await Database.findById(req.body.databaseId);
+    if (!parent) {
+        return next(new AppError('No parent database document found with that ID', 404));
     }
-    Collection.updateOne({ _id: id }, col)
-        .then(result => {
-            res.status(200).json({
-                status: '/collections PATCH successful'
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                status: '/collections PATCH failed'
-            });
-        });
-}
+    const newCol = await Collection.create(req.body);
+    res.status(201).json({
+        status: 'success',
+        data: {
+            collection: newCol
+        }
+    });
+});
 
-exports.delete = (req, res, next) => {
-    const id = req.params.id;
-    Collection.deleteOne({ _id: id })
-        .then(result => {
-            res.status(200).json({
-                status: '/collections DELETE successful'
-            });
-        })
-        .catch(error => {
-            res.status(500).json({
-                status: '/collections DELETE failed'
-            });
-        });
-}
+exports.getAll = factory.getAll(Collection);
+
+exports.get = factory.getOne(Collection);
+
+exports.patch = factory.updateOne(Collection);
+
+exports.delete = factory.deleteOne(Collection);

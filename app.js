@@ -5,6 +5,8 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 
+const globalErrorHandler = require('./api/controllers/errorController');
+
 const app = express();
 
 const collectionRoutes = require('./api/routes/collectionRoutes');
@@ -65,13 +67,6 @@ app.use((req, resp, next) => {
     next(error);
 })
 
-app.use((error, req, resp, next) => {
-    resp.status(error.status || 500);
-    resp.json({
-        error: {
-            message: error.message
-        }
-    });
-});
+app.use(globalErrorHandler);
 
 module.exports = app;
