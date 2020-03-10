@@ -1,6 +1,6 @@
 const factory = require('./handlerFactory');
 const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/AppError');
+const AppError = require('./../utils/appError');
 
 const Document = require('../models/documentModel');
 const Collection = require('../models/collectionModel');

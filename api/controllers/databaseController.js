@@ -1,6 +1,6 @@
 const factory = require('./handlerFactory');
 const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/AppError');
+const AppError = require('./../utils/appError');
 
 const Database = require('./../models/databaseModel');
 const Project = require('./../models/projectModel');
